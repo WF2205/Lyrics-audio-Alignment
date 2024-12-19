@@ -2,6 +2,7 @@
 model/
 model960/
 dataset/output-en/
+dataset/songs-en/
 *.ckpt
 *.pth
 *.h5
