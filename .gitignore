@@ -1,0 +1,10 @@
+# Ignore model checkpoints and large files
+model/
+model960/
+dataset/output-en/
+*.ckpt
+*.pth
+*.h5
+
+# Ignore environment file
+*.env

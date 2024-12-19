@@ -197,8 +197,34 @@ def ASR_sync(audio_path, lyrics_words_path):
 
     # Load Model
     model_id = 'facebook/wav2vec2-large-960h-lv60-self'
-    Wav2Vec2_model = Wav2Vec2ForCTC.from_pretrained(model_id)
-    Wav2Vec2_processor = Wav2Vec2Processor.from_pretrained(model_id)
+    # model_id = 'microsoft/wavlm-base-plus'
+
+    # Load Model: Ensure the local path to the fine-tuned model is correct and accessible.
+    # model_id = '/home/kangyi/lyrics-sync/model960/checkpoint-10000'
+
+    if model_id != '/home/kangyi/lyrics-sync/model960/checkpoint-12822':
+        Wav2Vec2_model = Wav2Vec2ForCTC.from_pretrained(model_id)
+        Wav2Vec2_processor = Wav2Vec2Processor.from_pretrained(model_id)
+    else: 
+        Wav2Vec2_model = Wav2Vec2ForCTC.from_pretrained(model_id)
+        tokenizer = Wav2Vec2CTCTokenizer("vocab.json", unk_token="[UNK]", pad_token="[PAD]", word_delimiter_token="|")
+        feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, sampling_rate=16000, padding_value=0.0, do_normalize=True, return_attention_mask=False)
+        Wav2Vec2_processor = Wav2Vec2Processor(feature_extractor=feature_extractor, tokenizer=tokenizer)
+        # try:
+        #     Wav2Vec2_model = Wav2Vec2ForCTC.from_pretrained(model_id)
+        #     Wav2Vec2_processor = Wav2Vec2Processor.from_pretrained(model_id)
+        # except Exception as e:
+        #     raise RuntimeError(f"Failed to load the model or processor from {model_id}. Ensure the path is correct. Error: {e}")
+
+        # # Tokenize Lyrics
+        # try:
+        #     lyrics_tokens = Wav2Vec2_processor.tokenizer(lyrics_processed).input_ids
+        # except AttributeError:
+        #     raise RuntimeError("Tokenizer not found in the processor. Ensure the fine-tuned model includes a compatible tokenizer.")
+
+        # # Check Model Compatibility
+        # if Wav2Vec2_model.config.vocab_size != len(Wav2Vec2_processor.tokenizer):
+        #     raise ValueError("Mismatch between model vocab size and tokenizer vocabulary. Check your fine-tuned model.")
 
     duration_sec = 0
 
